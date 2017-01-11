@@ -1,2 +1,36 @@
 ---
 # tasks file for AerisCloud.swarm
+#- name: Display all variables/facts known for a host
+#  debug:
+#    var: swarm_manager
+
+- name: Create cluster on the leader
+  swarm:
+    action: init
+    listen_addr: "{{swarm_listen_addr}}"
+    advertise_addr: "{{swarm_advertise_addr}}"
+  when: swarm_leader|bool
+
+- name: Have managers join the cluster
+  swarm:
+    action: join
+    type: manager
+    listen_addr: "{{swarm_listen_addr}}"
+    advertise_addr: "{{swarm_advertise_addr}}"
+    remote_addrs: "{{swarm_remote_addrs|list}}"
+  when: swarm_manager|bool
+
+- name: Have workers join the cluster
+  swarm:
+    action: join
+    type: worker
+    listen_addr: "{{swarm_listen_addr}}"
+    advertise_addr: "{{swarm_advertise_addr}}"
+    remote_addrs: "{{swarm_remote_addrs|list}}"
+  when: swarm_worker|bool
+
+- name: Set nodes availability
+  swarm:
+    action: availability
+    type: '{{swarm_availability}}'
+  when: swarm_availability is defined and swarm_availability != ""
