@@ -196,13 +196,13 @@ def init(listen_addr, advertise_addr=None, force=False, **kwargs):
     code, res = fetch_url(build_url(kwargs, '/swarm/init'), post_data)
 
     # already in a swarm
-    if code == 406:
+    if code == 406 or code == 503:
         return False, res
 
     if code == 200:
         return True, res
 
-    raise Exception('Invalid answer from docker: %s' % (res['message']))
+    raise Exception('Invalid answer from docker [%d]: %s' % (code, res['message']))
 
 def join(type, remote_addrs, listen_addr, advertise_addr=None, **kwargs):
     if type not in ['worker', 'manager']:
@@ -226,13 +226,13 @@ def join(type, remote_addrs, listen_addr, advertise_addr=None, **kwargs):
     code, res = fetch_url(build_url(kwargs, '/swarm/join'), post_data)
 
     # already in a swarm
-    if code == 406:
+    if code == 406 or code == 503:
         return False, res
 
     if code == 200:
         return True, res
 
-    raise Exception('Invalid answer from docker: %s' % (res['message']))
+    raise Exception('Invalid answer from docker [%d]: %s' % (code, res['message']))
 
 def availability(type, **kwargs):
     if type not in ['active', 'pause', 'drain']:

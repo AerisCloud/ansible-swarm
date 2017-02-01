@@ -10,6 +10,7 @@
     listen_addr: "{{swarm_listen_addr}}"
     advertise_addr: "{{swarm_advertise_addr}}"
   when: swarm_leader|bool
+  tags: ["docker", "swarm"]
 
 - name: Have managers join the cluster
   swarm:
@@ -19,6 +20,7 @@
     advertise_addr: "{{swarm_advertise_addr}}"
     remote_addrs: "{{swarm_remote_addrs|list}}"
   when: swarm_manager|bool
+  tags: ["docker", "swarm"]
 
 - name: Have workers join the cluster
   swarm:
@@ -28,9 +30,11 @@
     advertise_addr: "{{swarm_advertise_addr}}"
     remote_addrs: "{{swarm_remote_addrs|list}}"
   when: swarm_worker|bool
+  tags: ["docker", "swarm"]
 
 - name: Set nodes availability
   swarm:
     action: availability
     type: '{{swarm_availability}}'
   when: swarm_availability is defined and swarm_availability != ""
+  tags: ["docker", "swarm"]
